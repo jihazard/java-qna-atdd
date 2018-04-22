@@ -130,12 +130,4 @@ public class UserAcceptanceTest extends AcceptanceTest {
         assertThat(response.getHeaders().getLocation().getPath(), is("/users/login"));
     }
 
-    private HttpEntity<MultiValueMap<String, Object>> build() {
-        return new HttpEntity<>(params, headers);
-    }
-
-    private void addParam(String userId, String password) {
-        params.add("userId", userId);
-        params.add("password", password);
-    }
 }

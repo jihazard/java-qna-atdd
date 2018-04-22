@@ -43,6 +43,6 @@ public class UserService {
     public User login(String userId, String password) throws UnAuthenticationException {
         return userRepository.findByUserId(userId)
                .filter(n->n.matchPassword(password))
-                .orElseThrow(UnAuthenticationException::new);
+               .orElseThrow(UnAuthenticationException::new);
     }
 }
