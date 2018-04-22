@@ -30,14 +30,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private UserRepository userRepository;
-    private HttpHeaders headers;
-    private MultiValueMap<String, Object> params;
 
-    @Before
-    public void setUp() throws Exception {
-        headers = new HttpHeaders();
-        params  = new LinkedMultiValueMap<>();
-    }
 
     @Test
     public void createForm() throws Exception {
@@ -121,21 +114,17 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void login() throws Exception {
-        ResponseEntity<String> response = template().postForEntity("/users/login", HtmlFormDataBuilder.urlEncodedForm()
-                .addParameter("userId","yoon")
-                .addParameter("password","test")
-                .build(), String.class);
+        ResponseEntity<String> response = template()
+                .postForEntity("/users/login",
+                                    HtmlFormDataBuilder
+                                    .urlEncodedForm()
+                                    .addParameter("userId","yoon")
+                                    .addParameter("password","test")
+                                    .build()
+                             , String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertThat(response.getHeaders().getLocation().getPath(), is("/users/login"));
     }
 
-    private HttpEntity<MultiValueMap<String, Object>> build() {
-        return new HttpEntity<>(params, headers);
-    }
-
-    private void addParam(String userId, String password) {
-        params.add("userId", userId);
-        params.add("password", password);
-    }
 }

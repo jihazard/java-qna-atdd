@@ -47,4 +47,13 @@ public class QuestionDto {
         this.contents = contents;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                '}';
+    }
 }

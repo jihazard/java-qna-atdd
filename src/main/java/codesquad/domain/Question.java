@@ -57,6 +57,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return contents;
     }
 
+
     public User getWriter() {
         return writer;
     }

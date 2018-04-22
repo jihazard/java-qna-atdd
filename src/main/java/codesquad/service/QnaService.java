@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import codesquad.UnAuthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -65,5 +66,11 @@ public class QnaService {
     public Answer deleteAnswer(User loginUser, long id) {
         // TODO 답변 삭제 기능 구현 
         return null;
+    }
+
+    public Question findByTitle(String title) {
+        Question question = questionRepository.findByTitle(title).orElseThrow(NullPointerException::new);
+        System.out.println("파인트 바이 타이틀" +  question.toString() +"//" + question.getWriter());
+        return question;
     }
 }
