@@ -5,6 +5,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import codesquad.UnAuthorizedException;
+import codesquad.dto.QuestionDto;
+import codesquad.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -36,19 +38,32 @@ public class QnaService {
         log.debug("question : {}", question);
         return questionRepository.save(question);
     }
+    public Question add(QuestionDto questionDto) {
+        return questionRepository.save(questionDto.toQuestion());
+    }
+
 
     public Question findById(long id) {
         return questionRepository.findOne(id);
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
-        return null;
+    public Question update(User loginUser, long id, QuestionDto updatedQuestion) {
+        Question original = questionRepository.findOne(id);
+        System.out.println("업데이트 파인드원 " + original.getTitle() +"//" + original.getWriter());
+        original.update(loginUser, updatedQuestion.toQuestion());
+        return questionRepository.save(original);
+
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        // TODO 삭제 기능 구현
+        Question question = questionRepository.findOne(questionId);
+        System.out.println("삭제하기 위해 찾은 질문 " + question.getTitle() + "//." + loginUser.getUserId() +"/////" + question.getWriter().getUserId());
+        if(!loginUser.getUserId().equals(question.getWriter().getUserId())) {
+            throw new UnAuthorizedException();
+        }
+        questionRepository.delete(questionId);
+
     }
 
     public Iterable<Question> findAll() {
@@ -73,4 +88,6 @@ public class QnaService {
         System.out.println("파인트 바이 타이틀" +  question.toString() +"//" + question.getWriter());
         return question;
     }
+
+
 }
