@@ -80,14 +80,12 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     }
 
     public void update(User loginUser, Question writer) {
-        this.writer = writer.getWriter();
-        if (!isOwner(loginUser)) {
+       if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
         this.title = writer.getTitle();
         this.contents = writer.getContents();
     }
-
 
     @Override
     public String generateUrl() {

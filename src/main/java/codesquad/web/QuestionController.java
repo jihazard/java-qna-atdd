@@ -29,18 +29,12 @@ public class QuestionController {
     @Resource(name = "qnaService")
     private QnaService qnaService;
 
-    @PostMapping("")
-    public String create(QuestionDto questionDto) {
-        qnaService.add(questionDto);
-        return "redirect:/users";
-    }
     @PostMapping("/create")
-    public String create2(@LoginUser User loginUser ,String contents, String title ) throws UnAuthenticationException {
-        log.debug("inputData" + loginUser.getUserId() +"//" + contents + "//" + title);
+    public String create(@LoginUser User loginUser ,String contents, String title ) {
         qnaService.create(loginUser, new Question(title,contents));
-        Question quest = qnaService.findByTitle(title);
         return "redirect:/questions/create";
     }
+
     @GetMapping("/list")
     public String list(Model model) {
         Iterable<Question> all = qnaService.findAll();
@@ -53,48 +47,23 @@ public class QuestionController {
         return "home";
     }
 
-    @GetMapping("/form")
-    public String form() {
-        return "/qna/form";
-    }
-
-    @GetMapping("/{id}/form")
-    public String updateForm(@LoginUser User loginUser, @PathVariable long id, Model model) {
-
-       // model.addAttribute("user", qnaService.findByTitle());
-        return "/user/updateForm";
-    }
-
     @PutMapping("/{id}")
     public String update(@LoginUser User loginUser, @PathVariable long id, String title, String contents) {
-        System.out.println("targettarget" + title +"//" + contents);
-        //qnaService.update(loginUser, id, target);
-        return "redirect:/questions/list";
+        qnaService.update(loginUser, id, new QuestionDto(title, contents));
+        return "redirect:/home";
+
     }
 
     @DeleteMapping("/{id}")
     public String delete(@LoginUser User loginUser, @PathVariable long id) throws CannotDeleteException {
-        Iterable<Question> all2 = qnaService.findAll();
-        Iterator allIterator2 = all2.iterator();
-        while (allIterator2.hasNext()) {
-            System.out.println("-------------------------------");
-            System.out.println("삭제전글목록 " + allIterator2.next());
-            System.out.println("-------------------------------");
-        }
-
-        System.out.println("targettarget" + id);
         qnaService.deleteQuestion(loginUser, id);
-
-        Iterable<Question> all = qnaService.findAll();
-        Iterator allIterator = all.iterator();
-        while (allIterator.hasNext()) {
-            System.out.println("-------------------------------");
-            System.out.println("글목록 " + allIterator.next());
-            System.out.println("-------------------------------");
-        }
-
-
         return "redirect:/home";
+    }
+
+    @GetMapping("/{id}")
+    public String show(@PathVariable long id , Model model) {
+        model.addAttribute("question" , qnaService.findById(id));
+        return "/qna/show";
     }
 
 }

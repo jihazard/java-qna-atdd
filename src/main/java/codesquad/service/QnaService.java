@@ -1,24 +1,17 @@
 package codesquad.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
+import codesquad.domain.*;
 import codesquad.dto.QuestionDto;
-import codesquad.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import codesquad.CannotDeleteException;
-import codesquad.domain.Answer;
-import codesquad.domain.AnswerRepository;
-import codesquad.domain.Question;
-import codesquad.domain.QuestionRepository;
-import codesquad.domain.User;
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service("qnaService")
 public class QnaService {
@@ -49,7 +42,6 @@ public class QnaService {
 
     public Question update(User loginUser, long id, QuestionDto updatedQuestion) {
         Question original = questionRepository.findOne(id);
-        System.out.println("업데이트 파인드원 " + original.getTitle() +"//" + original.getWriter());
         original.update(loginUser, updatedQuestion.toQuestion());
         return questionRepository.save(original);
 
@@ -58,7 +50,6 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
         Question question = questionRepository.findOne(questionId);
-        System.out.println("삭제하기 위해 찾은 질문 " + question.getTitle() + "//." + loginUser.getUserId() +"/////" + question.getWriter().getUserId());
         if(!loginUser.getUserId().equals(question.getWriter().getUserId())) {
             throw new UnAuthorizedException();
         }
@@ -84,8 +75,9 @@ public class QnaService {
     }
 
     public Question findByTitle(String title) {
-        Question question = questionRepository.findByTitle(title).orElseThrow(NullPointerException::new);
-        System.out.println("파인트 바이 타이틀" +  question.toString() +"//" + question.getWriter());
+        Question question = questionRepository
+                .findByTitle(title)
+                .orElseThrow(NullPointerException::new);
         return question;
     }
 
