@@ -42,12 +42,11 @@ public class QnaService {
     }
 
     @Transactional
-    public Question update(User loginUser, long id, QuestionDto updatedQuestion) {
+    public void update(User loginUser, long id, QuestionDto updatedQuestion) {
         Question original = questionRepository.findOne(id);
         original.update(loginUser, updatedQuestion.toQuestion());
-        return questionRepository.save(original);
-
     }
+
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
         Question question = questionRepository.findOne(questionId);
