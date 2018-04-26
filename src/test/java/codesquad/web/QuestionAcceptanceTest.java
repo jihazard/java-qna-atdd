@@ -147,4 +147,19 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         question.update(user, new QuestionDto("업데이트테스트타이틀","업데이트테스트컨텐츠").toQuestion());
         assertThat(question.getTitle(),is("업데이트테스트타이틀"));
  }
+
+    @Test
+    @Transactional
+    public void 도메인_isOwner_테스트_isOwnerTrue() throws Exception {
+        User user   = defaultUser();
+        Question question = defaultQuestion(user);
+        assertThat(question.isOwner(user),is(true));
+    }
+    @Test
+    @Transactional
+    public void 도메인_isOwner_테스트_isOwnerFalse() throws Exception {
+        User anotherUser = anotherUser();
+        Question question = defaultQuestion(user);
+        assertThat(question.isOwner(anotherUser),is(false));
+    }
 }
