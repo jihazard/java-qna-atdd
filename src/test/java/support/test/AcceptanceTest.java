@@ -16,8 +16,8 @@ import codesquad.domain.UserRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AcceptanceTest {
     private static final String DEFAULT_LOGIN_USER = "sanjigi";
+    private static final String ANOTHER_LOGIN_USER = "yoon";
     private static final String DEFAULT_TITLE = "runtime 에 reflect 발동 주체 객체가 뭔지 알 방법이 있을까요?";
-    private static final Long DEFAULT_ID = 2L;
 
     @Autowired
     private TestRestTemplate template;
@@ -42,6 +42,9 @@ public abstract class AcceptanceTest {
     
     protected User defaultUser() {
         return findByUserId(DEFAULT_LOGIN_USER);
+    }
+    protected User anotherUser() {
+        return findByUserId(ANOTHER_LOGIN_USER);
     }
     protected Question defaultQuestion(User id) {
         return findbyTitle(id);

@@ -3,6 +3,7 @@ package codesquad.web;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
+import codesquad.dto.QuestionDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -78,6 +79,12 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
      }
     @Test
     @Transactional
+    public void  업데이트_다른계정_로그인유저() throws Exception {
+        ResponseEntity<String> response = update(defaultQuestion(user), basicAuthTemplate(anotherUser()));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+    @Test
+    @Transactional
     public void  업데이트_비로그인유저() throws Exception {
         ResponseEntity<String> response = update(defaultQuestion(user), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
@@ -112,6 +119,13 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     @Transactional
+    public void  삭제_다른계정_로그인유저() throws Exception {
+        ResponseEntity<String> response = delete(defaultQuestion(user), basicAuthTemplate(anotherUser()));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    @Transactional
     public void  삭제_비로그인유저() throws Exception {
         ResponseEntity<String> response = delete(defaultQuestion(user), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
@@ -124,4 +138,13 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
                         .delete()
                         .build(), String.class);
     }
+
+    @Test
+    @Transactional
+    public void 도메인_질문_UPDATE_테스트() throws Exception {
+        User user = defaultUser();
+        Question question = defaultQuestion(user);
+        question.update(user, new QuestionDto("업데이트테스트타이틀","업데이트테스트컨텐츠").toQuestion());
+        assertThat(question.getTitle(),is("업데이트테스트타이틀"));
+ }
 }
