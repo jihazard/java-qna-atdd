@@ -2,6 +2,8 @@ package codesquad.web;
 
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
+import codesquad.domain.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -19,29 +22,36 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    private User user;
+
+    @Before
+    public void setUp() throws Exception {
+        user = defaultUser();
+    }
 
     @Test
     public void 리스트_비로그인유저() throws Exception {
         ResponseEntity<String> response = template().getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
-         assertThat(response.getBody().contains(defaultQuestion().getTitle()), is(true));
+         assertThat(response.getBody().contains(defaultQuestion(defaultUser()).getTitle()), is(true));
     }
     @Test
+    @Transactional
     public void 리스트_로그인유저() throws Exception {
-        ResponseEntity<String> response = basicAuthTemplate(defaultUser())
+        ResponseEntity<String> response = basicAuthTemplate(user)
                                           .getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
-        assertThat(response.getBody().contains(defaultQuestion().getTitle()), is(true));
+        assertThat(response.getBody().contains(defaultQuestion(user).getTitle()), is(true));
     }
 
     @Test
     public void 질문_생성_로그인유저() throws Exception {
         String title = "질문생성테스트";
-        ResponseEntity<String> response = create(title, basicAuthTemplate(defaultUser()));
+        ResponseEntity<String> response = create(title, basicAuthTemplate(user));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
-        assertNotNull(questionRepository.findByTitle(title));
+        assertNotNull(questionRepository.findOne(user.getId()));
         assertThat(response.getHeaders().getLocation().getPath(), is("/questions/create"));
     }
 
@@ -60,16 +70,16 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @Transactional
     public void  업데이트_로그인유저() throws Exception {
-        Question question = defaultQuestion();
-        ResponseEntity<String> response = update(question, basicAuthTemplate(defaultUser()));
+        ResponseEntity<String> response = update(defaultQuestion(user), basicAuthTemplate(user));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/home"));
      }
     @Test
+    @Transactional
     public void  업데이트_비로그인유저() throws Exception {
-        Question question = defaultQuestion();
-        ResponseEntity<String> response = update(question, template());
+        ResponseEntity<String> response = update(defaultQuestion(user), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
@@ -84,24 +94,26 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @Transactional
     public void 상세보기_비로그인() throws Exception {
-        Question question = defaultQuestion();
+        Question question = defaultQuestion(user);
         ResponseEntity<String> response = template().getForEntity(String.format("/questions/%d",question.getId()), String.class);
         log.debug("body : {}", response.getBody());
         assertThat(response.getBody().contains(question.getContents()), is(true));
     }
 
     @Test
+    @Transactional
     public void  삭제_로그인유저() throws Exception {
-        Question question = defaultQuestion();
-        ResponseEntity<String> response = delete(question, basicAuthTemplate(defaultUser()));
+        ResponseEntity<String> response = delete(defaultQuestion(user), basicAuthTemplate(user));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/home"));
     }
 
     @Test
+    @Transactional
     public void  삭제_비로그인유저() throws Exception {
-        ResponseEntity<String> response = delete(defaultQuestion(), template());
+        ResponseEntity<String> response = delete(defaultQuestion(user), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 

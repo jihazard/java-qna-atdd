@@ -74,13 +74,4 @@ public class QnaService {
         // TODO 답변 삭제 기능 구현 
         return null;
     }
-
-    public Question findByTitle(String title) {
-        Question question = questionRepository
-                .findByTitle(title)
-                .orElseThrow(NullPointerException::new);
-        return question;
-    }
-
-
 }
