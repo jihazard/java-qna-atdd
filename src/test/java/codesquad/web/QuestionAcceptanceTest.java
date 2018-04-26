@@ -75,8 +75,9 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     private ResponseEntity<String> update(Question question, TestRestTemplate template) {
         return template
-                .postForEntity(String.format("/questions/%d", question.getId()), HtmlFormDataBuilder.urlEncodedForm()
-                        .addParameter("_method", "put")
+                .postForEntity(String.format("/questions/%d", question.getId()), HtmlFormDataBuilder
+                        .urlEncodedForm()
+                        .put()
                         .addParameter("title", "수정할 제목 내용")
                         .addParameter("contents", "수정할 컨텐츠 내용")
                         .build(), String.class);
@@ -108,7 +109,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         return template
                 .postForEntity(String.format("/questions/%d", question.getId()), HtmlFormDataBuilder
                         .urlEncodedForm()
-                        .addParameter("_method", "delete")
+                        .delete()
                         .build(), String.class);
     }
 }
