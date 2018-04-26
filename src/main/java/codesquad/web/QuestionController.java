@@ -35,15 +35,9 @@ public class QuestionController {
         return "redirect:/questions/create";
     }
 
-    @GetMapping("/list")
+    @GetMapping("")
     public String list(Model model) {
-        Iterable<Question> all = qnaService.findAll();
-        List<Object> questions = new ArrayList<>();
-        Iterator allIterator = all.iterator();
-        while (allIterator.hasNext()) {
-            questions.add(allIterator.next());
-        }
-        model.addAttribute("questions", questions);
+        model.addAttribute("questions", qnaService.findAll());
         return "home";
     }
 

@@ -26,6 +26,7 @@ public class QnaService {
     @Resource(name = "deleteHistoryService")
     private DeleteHistoryService deleteHistoryService;
 
+
     public Question create(User loginUser, Question question) {
         question.writeBy(loginUser);
         log.debug("question : {}", question);
@@ -40,17 +41,17 @@ public class QnaService {
         return questionRepository.findOne(id);
     }
 
+    @Transactional
     public Question update(User loginUser, long id, QuestionDto updatedQuestion) {
         Question original = questionRepository.findOne(id);
         original.update(loginUser, updatedQuestion.toQuestion());
         return questionRepository.save(original);
 
     }
-
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
         Question question = questionRepository.findOne(questionId);
-        if(!loginUser.getUserId().equals(question.getWriter().getUserId())) {
+        if(!question.isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
         questionRepository.delete(questionId);

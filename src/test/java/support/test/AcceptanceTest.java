@@ -45,7 +45,6 @@ public abstract class AcceptanceTest {
         return findbyTitle(DEFAULT_TITLE);
     }
 
-
     protected User findByUserId(String userId) {
         return userRepository.findByUserId(userId).get();
     }

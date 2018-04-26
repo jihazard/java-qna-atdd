@@ -22,7 +22,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void 리스트_비로그인유저() throws Exception {
-        ResponseEntity<String> response = template().getForEntity("/questions/list", String.class);
+        ResponseEntity<String> response = template().getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
          assertThat(response.getBody().contains(defaultQuestion().getTitle()), is(true));
@@ -30,7 +30,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     public void 리스트_로그인유저() throws Exception {
         ResponseEntity<String> response = basicAuthTemplate(defaultUser())
-                                          .getForEntity("/questions/list", String.class);
+                                          .getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
         assertThat(response.getBody().contains(defaultQuestion().getTitle()), is(true));
@@ -97,6 +97,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/home"));
     }
+
     @Test
     public void  삭제_비로그인유저() throws Exception {
         ResponseEntity<String> response = delete(defaultQuestion(), template());
