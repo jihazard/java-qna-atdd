@@ -14,6 +14,8 @@ public class QuestionDto {
     @Size(min = 3)
     private String contents;
 
+    private User writer;
+
     public QuestionDto(){}
 
     public QuestionDto(String title, String contents) {
@@ -24,6 +26,12 @@ public class QuestionDto {
         this.id = id;
         this.title = title;
         this.contents = contents;
+    }
+    public QuestionDto(long id, String title, String contents ,User writer) {
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+        this.writer = writer;
     }
 
     public long getId() {
@@ -44,10 +52,15 @@ public class QuestionDto {
         return this;
     }
         public Question toQuestion() {
-        return new Question(this.title, this.contents);
+        return new Question(this.title, this.contents ,this.writer);
     }
+
     public String getContents() {
         return contents;
+    }
+
+    public User getWriter() {
+        return writer;
     }
 
     public QuestionDto setContents(String contents) {

@@ -42,9 +42,10 @@ public class QnaService {
     }
 
     @Transactional
-    public void update(User loginUser, long id, QuestionDto updatedQuestion) {
+    public Question update(User loginUser, long id, QuestionDto updatedQuestion) {
         Question original = questionRepository.findOne(id);
         original.update(loginUser, updatedQuestion.toQuestion());
+        return questionRepository.save(original);
     }
 
     @Transactional
