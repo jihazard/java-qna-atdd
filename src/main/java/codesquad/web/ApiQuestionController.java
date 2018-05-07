@@ -48,11 +48,7 @@ public class ApiQuestionController {
 
     @PutMapping("/{id}")
     public void updateQuestion(@LoginUser User loginUser, @PathVariable long id, @Valid @RequestBody QuestionDto updateQuestion) {
-        System.out.println("before updateQuestions : {}" + updateQuestion.toString());
-        System.out.println("loginUser " + loginUser.toString());
-        Question question = qnaService.findById(id);
-        System.out.println("찾은 질문 : " +  question.toString());
         qnaService.update(loginUser, id, updateQuestion);
-        System.out.println("after updateQuestions : {}" + updateQuestion.toString());
+        log.debug("after updateQuestions : {}" + updateQuestion.toString());
     }
 }

@@ -3,6 +3,7 @@ package codesquad.service;
 import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.domain.*;
+import codesquad.dto.AnswerDto;
 import codesquad.dto.QuestionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,12 @@ public class QnaService {
     }
 
     public Answer addAnswer(User loginUser, long questionId, String contents) {
-        return null;
+        Question findQuestion = findById(questionId);
+        AnswerDto dto = new AnswerDto(loginUser.getId(),loginUser,contents,findQuestion);
+        log.debug("answer : {}", dto);
+        return answerRepository.save(dto.toAnswer());
     }
+
 
     public Answer deleteAnswer(User loginUser, long id) {
         // TODO 답변 삭제 기능 구현 

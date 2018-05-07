@@ -1,8 +1,10 @@
 package codesquad.web;
 
+import codesquad.domain.AnswerRepository;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
+import codesquad.dto.AnswerDto;
 import codesquad.dto.QuestionDto;
 import codesquad.dto.UserDto;
 import org.junit.Test;
@@ -17,11 +19,14 @@ import support.test.AcceptanceTest;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ApiQuestionAcceptanceTest extends AcceptanceTest {
+public class ApiAnswerAcceptanceTest extends AcceptanceTest {
     private static final Logger log = LoggerFactory.getLogger(QuestionAcceptanceTest.class);
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
+
 
     @Test
     public void 질문생성_로그인() throws Exception {
@@ -29,6 +34,18 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto dto = createQuestionDto(3L, "질문타이틀테스트","질문컨텐츠",anotherUser);
         String location = createResource("/api/questions",dto,anotherUser);
         assertThat(location, is("/api/questions/"+dto.getId()));
+    }
+
+    @Test
+    public void 답변생성() throws Exception {
+        User user = defaultUser();
+        QuestionDto dto = createQuestionDto(3L, "질문타이틀테스트","질문컨텐츠",user);
+        String location = createResource("/api/questions",dto,user);
+
+        AnswerDto answer = new AnswerDto(anotherUser(),"답변테스트",dto.toQuestion());
+        String answerLocation = createResource(location+"/answer",answer,user);
+
+        assertThat(answerLocation, is(location+"/answer/"+answer.getWriter_id()));
     }
 
     @Test

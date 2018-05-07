@@ -31,11 +31,12 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @Transactional
     public void 리스트_비로그인유저() throws Exception {
         ResponseEntity<String> response = template().getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
-         assertThat(response.getBody().contains(defaultQuestion(defaultUser()).getTitle()), is(true));
+         assertThat(response.getBody().contains(defaultQuestion(2L).getTitle()), is(true));
     }
     @Test
     @Transactional
@@ -44,7 +45,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
                                           .getForEntity("/questions", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         log.debug("body : {}", response.getBody());
-        assertThat(response.getBody().contains(defaultQuestion(user).getTitle()), is(true));
+        assertThat(response.getBody().contains(defaultQuestion(2L).getTitle()), is(true));
     }
 
     @Test
@@ -73,20 +74,20 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @Transactional
     public void  업데이트_로그인유저() throws Exception {
-        ResponseEntity<String> response = update(defaultQuestion(user), basicAuthTemplate(user));
+        ResponseEntity<String> response = update(defaultQuestion(2L), basicAuthTemplate(user));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/home"));
      }
     @Test
     @Transactional
     public void  업데이트_다른계정_로그인유저() throws Exception {
-        ResponseEntity<String> response = update(defaultQuestion(user), basicAuthTemplate(anotherUser()));
+        ResponseEntity<String> response = update(defaultQuestion(2L), basicAuthTemplate(anotherUser()));
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
     @Test
     @Transactional
     public void  업데이트_비로그인유저() throws Exception {
-        ResponseEntity<String> response = update(defaultQuestion(user), template());
+        ResponseEntity<String> response = update(defaultQuestion(2L), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
@@ -103,7 +104,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @Transactional
     public void 상세보기_비로그인() throws Exception {
-        Question question = defaultQuestion(user);
+        Question question = defaultQuestion(2L);
         ResponseEntity<String> response = template().getForEntity(String.format("/questions/%d",question.getId()), String.class);
         log.debug("body : {}", response.getBody());
         assertThat(response.getBody().contains(question.getContents()), is(true));
@@ -112,7 +113,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @Transactional
     public void  삭제_로그인유저() throws Exception {
-        ResponseEntity<String> response = delete(defaultQuestion(user), basicAuthTemplate(user));
+        ResponseEntity<String> response = delete(defaultQuestion(2L), basicAuthTemplate(user));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/home"));
     }
@@ -120,14 +121,14 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @Transactional
     public void  삭제_다른계정_로그인유저() throws Exception {
-        ResponseEntity<String> response = delete(defaultQuestion(user), basicAuthTemplate(anotherUser()));
+        ResponseEntity<String> response = delete(defaultQuestion(2L), basicAuthTemplate(anotherUser()));
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
     @Test
     @Transactional
     public void  삭제_비로그인유저() throws Exception {
-        ResponseEntity<String> response = delete(defaultQuestion(user), template());
+        ResponseEntity<String> response = delete(defaultQuestion(2L), template());
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
@@ -143,7 +144,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Transactional
     public void 도메인_질문_UPDATE_테스트() throws Exception {
         User user = defaultUser();
-        Question question = defaultQuestion(user);
+        Question question = defaultQuestion(2L);
         question.update(user, new QuestionDto("업데이트테스트타이틀","업데이트테스트컨텐츠").toQuestion());
         assertThat(question.getTitle(),is("업데이트테스트타이틀"));
  }
@@ -152,14 +153,14 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Transactional
     public void 도메인_isOwner_테스트_isOwnerTrue() throws Exception {
         User user   = defaultUser();
-        Question question = defaultQuestion(user);
+        Question question = defaultQuestion(2L);
         assertThat(question.isOwner(user),is(true));
     }
     @Test
     @Transactional
     public void 도메인_isOwner_테스트_isOwnerFalse() throws Exception {
         User anotherUser = anotherUser();
-        Question question = defaultQuestion(user);
+        Question question = defaultQuestion(2L);
         assertThat(question.isOwner(anotherUser),is(false));
     }
 }

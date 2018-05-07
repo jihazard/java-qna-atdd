@@ -2,6 +2,7 @@ package support.test;
 
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
+import codesquad.dto.QuestionDto;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,13 +64,13 @@ public abstract class AcceptanceTest {
     protected User anotherUser() {
         return findByUserId(ANOTHER_LOGIN_USER);
     }
-    protected Question defaultQuestion(User id) {
+    protected Question defaultQuestion(Long id) {
         return findQuestionByTitle(id);
     }
     protected User findByUserId(String userId) {
         return userRepository.findByUserId(userId).get();
     }
-    protected Question findQuestionByTitle(User id) {
-        return questionRepository.getOne(id.getId());
+    protected Question findQuestionByTitle(Long id) {
+        return questionRepository.getOne(id);
     }
 }
